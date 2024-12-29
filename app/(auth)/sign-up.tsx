@@ -6,9 +6,12 @@ import { images } from "../../constants";
 import FormField from "@/components/FormField";
 import CustomButton from "@/components/CButton";
 import { Link, router } from "expo-router";
+// import { createUser } from "@/lib/appwrite";
+import { useGlobalContext } from "@/context/GlobalProvider";
 import { createUser } from "@/lib/appwrite";
 
 const SignUp = () => {
+  const {setUser, setIsLogged} = useGlobalContext()
   const [isSubmitting, setSubmitting] = useState<boolean>(false);
   const [form, setForm] = useState<{
     username: string;
@@ -20,14 +23,18 @@ const SignUp = () => {
     password: "",
   });
 
-  const submit = async () => {
+  const submit = () => {
     if (!form.email || !form.password || !form.username) {
       Alert.alert("Error", "Please fill in all the fiels");
+      return
     }
+    
+    // createUser(form.email, form.password, form.username);
     setSubmitting(true);
     try {
-      await createUser(form.email, form.password, form.username);
-
+      const result = createUser(form.email, form.password, form.username);
+      setIsLogged(true)
+      setUser(result)
       // global state
       router.replace("/home");
     } catch (error) {

@@ -43,7 +43,7 @@ const TabsLayout = () => {
             backgroundColor: "#161622",
             borderTopWidth: 1,
             borderTopColor: "#232533",
-            height: 74,
+            height: 68,
             flexDirection: "row",
             justifyContent: "center",
             alignItems: "center",

@@ -18,24 +18,23 @@ export const config = {
   videoCollectionId: "6771854e002b510f40ec",
 };
 
-// Init your React Native SDK
 const client = new Client();
 
 client
-  .setEndpoint(config.endpoint) // Your Appwrite Endpoint
-  .setProject(config.projectId) // Your project ID
-  .setPlatform(config.platform); // Your application ID or bundle ID.
+  .setEndpoint(config.endpoint) 
+  .setProject(config.projectId) 
+  .setPlatform(config.platform);
 
 const account = new Account(client);
 const storage = new Storage(client);
 const avatars = new Avatars(client);
 const databases = new Databases(client);
 
-export async function createUser(
+export const createUser = async (
   email: string,
   password: string,
   username: string
-) {
+) => {
   try {
     const newAccount = await account.create(
       ID.unique(),
@@ -43,8 +42,6 @@ export async function createUser(
       password,
       username
     );
-
-    if (!newAccount) throw Error;
 
     const avatarUrl = avatars.getInitials(username);
 
@@ -62,30 +59,23 @@ export async function createUser(
       }
     );
 
-    // return newUser;
+    return newUser;
   } catch (error) {
-    if (typeof error === "string") {
-      throw new Error(error);
-    } else {
-      throw new Error("An unknown error occurred");
-    }
+    throw error
   }
-}
+};
+
 
 // Sign In
 export async function signIn(email: string, password: string) {
   try {
     const session = await account.createEmailPasswordSession(email, password);
-
     return session;
-  } catch (error) {
-    if (typeof error === "string") {
-      throw new Error(error);
-    } else {
-      throw new Error("An unknown error occurred");
-    }
+  } catch (error: any) {
+    throw new Error(error?.message || "Sign-in failed");
   }
 }
+
 
 // Get Account
 export const getAccount = async() => {
