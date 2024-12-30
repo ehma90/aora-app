@@ -21,8 +21,8 @@ export const config = {
 const client = new Client();
 
 client
-  .setEndpoint(config.endpoint) 
-  .setProject(config.projectId) 
+  .setEndpoint(config.endpoint)
+  .setProject(config.projectId)
   .setPlatform(config.platform);
 
 const account = new Account(client);
@@ -61,10 +61,9 @@ export const createUser = async (
 
     return newUser;
   } catch (error) {
-    throw error
+    throw error;
   }
 };
-
 
 // Sign In
 export async function signIn(email: string, password: string) {
@@ -76,9 +75,8 @@ export async function signIn(email: string, password: string) {
   }
 }
 
-
 // Get Account
-export const getAccount = async() => {
+export const getAccount = async () => {
   try {
     const currentAccount = await account.get();
 
@@ -90,7 +88,7 @@ export const getAccount = async() => {
       throw new Error("An unknown error occurred");
     }
   }
-}
+};
 
 export const getCurrentUser = async () => {
   try {
@@ -111,3 +109,49 @@ export const getCurrentUser = async () => {
     return null;
   }
 };
+
+// Get all post
+export const getAllPost = async () => {
+  try {
+    const posts = await databases.listDocuments(
+      config.databaseId,
+      config.videoCollectionId
+    );
+
+    return posts.documents;
+  } catch (error) {
+    throw error;
+  }
+};
+
+// Get latest created video posts
+export async function getLatestPosts() {
+  try {
+    const posts = await databases.listDocuments(
+      config.databaseId,
+      config.videoCollectionId,
+      [Query.orderDesc("$createdAt"), Query.limit(7)]
+    );
+
+    return posts.documents;
+  } catch (error) {
+    throw error;
+  }
+}
+
+// Get video posts that matches search query
+export async function searchPosts(query: any) {
+  try {
+    const posts = await databases.listDocuments(
+      config.databaseId,
+      config.videoCollectionId,
+      [Query.search("title", query)]
+    );
+
+    if (!posts) throw new Error("Something went wrong");
+
+    return posts.documents;
+  } catch (error) {
+    throw error;
+  }
+}

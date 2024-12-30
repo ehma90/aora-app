@@ -1,25 +1,39 @@
-import { View, Text, FlatList, Image } from "react-native";
-import React from "react";
+import { View, Text, FlatList, Image, RefreshControl } from "react-native";
+import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { images } from "@/constants";
 import SearchInput from "@/components/SearchInput";
 import { StatusBar } from "expo-status-bar";
+import EmptyState from "@/components/EmptyState";
+import { getAllPost, getLatestPosts } from "@/lib/appwrite";
+import useAppWrite from "@/lib/hooks/useAppWrite";
+import VideoCard from "@/components/VideoCard";
+import Trending from "@/components/Trending";
 
 const Home = () => {
+  const [refreshing, setRefreshing] = useState<boolean>(false);
+  const { data: posts, refetch } = useAppWrite(getAllPost);
+  const { data: latestPosts,  } = useAppWrite(getLatestPosts);
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await refetch();
+    setRefreshing(false);
+  };
+
   return (
-    <SafeAreaView className="bg-primary">
+    <SafeAreaView className="bg-primary h-full">
       <FlatList
-        data={[{id: '1'}]}
-        keyExtractor={(item) => item?.id}
+        data={posts}
+        keyExtractor={(item) => item.$id}
         renderItem={({ item }) => (
-          // <VideoCard
-          //   title={item.title}
-          //   thumbnail={item.thumbnail}
-          //   video={item.video}
-          //   creator={item.creator.username}
-          //   avatar={item.creator.avatar}
-          // />
-          <Text>{item.id}</Text>
+          <VideoCard
+            title={item.title}
+            thumbnail={item.thumbnail}
+            video={item.video}
+            creator={item.creator.username}
+            avatar={item.creator.avatar}
+          />
         )}
         ListHeaderComponent={() => (
           <View className="flex my-6 px-4 space-y-6">
@@ -49,21 +63,21 @@ const Home = () => {
                 Latest Videos
               </Text>
 
-              {/* <Trending posts={latestPosts ?? []} /> */}
+              <Trending posts={latestPosts ?? []} />
             </View>
           </View>
         )}
-        // ListEmptyComponent={() => (
-        //   <EmptyState
-        //     title="No Videos Found"
-        //     subtitle="No videos created yet"
-        //   />
-        // )}
-        // refreshControl={
-        //   <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        // }
+        ListEmptyComponent={() => (
+          <EmptyState
+            title="No Videos Found"
+            subtitle="No videos created yet"
+          />
+        )}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
       />
-      <StatusBar style="light" backgroundColor="#161622"/>
+      <StatusBar style="light" backgroundColor="#161622" />
     </SafeAreaView>
   );
 };

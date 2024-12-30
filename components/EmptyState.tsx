@@ -14,7 +14,7 @@ const EmptyState: FC<{ title: string; subtitle: string }> = ({
       <Image
         source={images.empty}
         resizeMode="contain"
-        className="w-[270px] h-[216px]"
+        style={{width: 270, height: 216}}
       />
 
       <Text className="text-sm font-pmedium text-gray-100">{title}</Text>
@@ -25,7 +25,7 @@ const EmptyState: FC<{ title: string; subtitle: string }> = ({
       <CustomButton
         title="Back to Explore"
         handlePress={() => router.push("/home")}
-        containerStyles="w-full my-5"
+        containerStyles="w-full mt-7 mb-7 bg-secondary rounded-xl min-h-[62px] flex flex-row justify-center items-center"
       />
     </View>
   );

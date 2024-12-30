@@ -4,7 +4,7 @@ import { View, TouchableOpacity, Image, TextInput, Alert } from "react-native";
 
 import { icons } from "../constants";
 
-const SearchInput = ({ initialQuery }: { initialQuery?: string }) => {
+const SearchInput = ({ initialQuery }: { initialQuery?: any }) => {
   const pathname = usePathname();
   const [query, setQuery] = useState<string>(initialQuery || "");
 
@@ -28,6 +28,13 @@ const SearchInput = ({ initialQuery }: { initialQuery?: string }) => {
 
           if (pathname.startsWith("/search")) router.setParams({ query });
           else router.push(`/search/${query}`);
+        }}
+        style={{
+          width: 30,
+          height: 30,
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
         }}
       >
         <Image
