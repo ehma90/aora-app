@@ -44,7 +44,6 @@ const TrendingItem = ({ activeItem, item }: { activeItem: any; item: any }) => {
 
 
   const player = useVideoPlayer(testVideoURL, (player) => {
-    console.log('Player initialized:', player);
     player.loop = true;
     player.play();
   });

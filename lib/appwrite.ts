@@ -115,7 +115,8 @@ export const getAllPost = async () => {
   try {
     const posts = await databases.listDocuments(
       config.databaseId,
-      config.videoCollectionId
+      config.videoCollectionId,
+      [Query.orderDesc("$createdAt")]
     );
 
     return posts.documents;
@@ -125,7 +126,7 @@ export const getAllPost = async () => {
 };
 
 // Get latest created video posts
-export async function getLatestPosts() {
+export const getLatestPosts = async () => {
   try {
     const posts = await databases.listDocuments(
       config.databaseId,
@@ -137,10 +138,10 @@ export async function getLatestPosts() {
   } catch (error) {
     throw error;
   }
-}
+};
 
 // Get video posts that matches search query
-export async function searchPosts(query: any) {
+export const searchPosts = async (query: any) => {
   try {
     const posts = await databases.listDocuments(
       config.databaseId,
@@ -154,4 +155,113 @@ export async function searchPosts(query: any) {
   } catch (error) {
     throw error;
   }
-}
+};
+
+// Get video posts created by user
+export const getUserPosts = async (userId: string) => {
+  try {
+    const posts = await databases.listDocuments(
+      config.databaseId,
+      config.videoCollectionId,
+      [Query.equal("creator", userId), Query.orderDesc("$createdAt")]
+    );
+
+    return posts.documents;
+  } catch (error) {
+    throw error;
+  }
+};
+
+// Sign Out
+export const signOut = async () => {
+  try {
+    const session = await account.deleteSession("current");
+
+    return session;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const uploadFile = async (file: any, type: any) => {
+  if (!file) {
+    throw new Error("No file selected");
+  }
+
+  const { mimeType, ...rest } = file;
+  const asset = { type: mimeType, ...rest };
+
+  try {
+    // Upload the file to Appwrite storage
+    const uploadedFile = await storage.createFile(
+      config.storageId, // Replace with your Appwrite storage bucket ID
+      ID.unique(), // Generate a unique ID for the file
+      asset
+    );
+
+    if (!uploadedFile || !uploadedFile.$id) {
+      throw new Error("Failed to upload file. No $id found.");
+    }
+
+    const fileUrl = await getFilePreview(uploadedFile.$id, type);
+    return fileUrl;
+  } catch (error) {
+    console.error("Error uploading file:", error);
+    throw error;
+  }
+};
+
+export const getFilePreview = async (fileId: string, type: string) => {
+  try {
+    let fileUrl;
+
+    // Get the file preview URL based on the type (image/video)
+    if (type === "video") {
+      fileUrl = storage.getFileView(config.storageId, fileId);
+    } else if (type === "image") {
+      fileUrl = storage.getFilePreview(config.storageId, fileId);
+    } else {
+      throw new Error("Invalid file type");
+    }
+
+    // Ensure that a file URL is returned
+    if (!fileUrl) {
+      throw new Error("Failed to retrieve file preview");
+    }
+
+    return fileUrl;
+  } catch (error) {
+    console.error("Error getting file preview:", error);
+    throw error;
+  }
+};
+
+export const createVideoPost = async (form: any) => {
+  try {
+    const [thumbnailUrl, videoUrl] = await Promise.all([
+      uploadFile(form.thumbnail, "image"),
+      uploadFile(form.video, "video"),
+    ]);
+
+    console.log("thumbnail", thumbnailUrl);
+
+    // Store the post details in the database
+    const newPost = await databases.createDocument(
+      config.databaseId, // Your Appwrite database ID
+      config.videoCollectionId, // Your Appwrite collection ID
+      ID.unique(),
+      {
+        title: form.title,
+        thumbnail: thumbnailUrl, // Store the thumbnail URL
+        video: videoUrl, // Store the video URL
+        prompt: form.prompt,
+        creator: form.userId, // Assuming userId is passed in the form
+      }
+    );
+
+    console.log(newPost);
+  } catch (error) {
+    console.error("Error creating video post:", error);
+    throw new Error("Unable to create a video post");
+  }
+};

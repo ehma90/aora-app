@@ -1,4 +1,4 @@
-import { View, Text, Image, FlatList } from "react-native";
+import { View, Text, FlatList } from "react-native";
 import React, { useEffect } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useLocalSearchParams } from "expo-router";
@@ -6,7 +6,6 @@ import useAppWrite from "@/lib/hooks/useAppWrite";
 import { searchPosts } from "@/lib/appwrite";
 import SearchInput from "@/components/SearchInput";
 import EmptyState from "@/components/EmptyState";
-import { images } from "@/constants";
 import VideoCard from "@/components/VideoCard";
 
 const Search = () => {
@@ -16,8 +15,6 @@ const Search = () => {
   useEffect(() => {
     refetch();
   }, [query]);
-
-  console.log(posts)
 
   return (
     <SafeAreaView className="bg-primary h-full">

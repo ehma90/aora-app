@@ -10,7 +10,10 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "package": "com.ehma.aora"
+      "package": "com.ehma.aora",
+      "infoPlist": {
+    "NSPhotoLibraryUsageDescription": "Allow access to your photos to select files."
+  }
     },
     "android": {
       "adaptiveIcon": {
@@ -18,7 +21,7 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.ehma.aora",
-      "permissions": ["INTERNET"]
+      "permissions": ["INTERNET", "READ_EXTERNAL_STORAGE", "WRITE_EXTERNAL_STORAGE"]
     },
     "web": {
       "bundler": "metro",

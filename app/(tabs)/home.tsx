@@ -9,17 +9,24 @@ import { getAllPost, getLatestPosts } from "@/lib/appwrite";
 import useAppWrite from "@/lib/hooks/useAppWrite";
 import VideoCard from "@/components/VideoCard";
 import Trending from "@/components/Trending";
+import { useGlobalContext } from "@/context/GlobalProvider";
 
 const Home = () => {
   const [refreshing, setRefreshing] = useState<boolean>(false);
+  const { user } = useGlobalContext();
   const { data: posts, refetch } = useAppWrite(getAllPost);
-  const { data: latestPosts,  } = useAppWrite(getLatestPosts);
+  const { data: latestPosts } = useAppWrite(getLatestPosts);
 
   const onRefresh = async () => {
     setRefreshing(true);
     await refetch();
     setRefreshing(false);
   };
+
+  useEffect(() => {
+    onRefresh;
+    refetch()
+  }, []);
 
   return (
     <SafeAreaView className="bg-primary h-full">
@@ -35,15 +42,16 @@ const Home = () => {
             avatar={item.creator.avatar}
           />
         )}
+        ListFooterComponentStyle={{display: 'flex', flexDirection: 'row', gap: 20}}
         ListHeaderComponent={() => (
           <View className="flex my-6 px-4 space-y-6">
             <View className="flex justify-between items-start flex-row mb-6">
               <View>
                 <Text className="font-pmedium text-sm text-gray-100">
-                  Welcome Back
+                  Welcome Back,
                 </Text>
                 <Text className="text-2xl font-psemibold text-white">
-                  JSMastery
+                  {user?.username}
                 </Text>
               </View>
 

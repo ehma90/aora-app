@@ -1,7 +1,8 @@
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { View, Text, TouchableOpacity, Image } from "react-native";
 import { icons } from "@/constants";
 import { VideoView, useVideoPlayer } from "expo-video";
+import CustomButton from "./CButton";
 
 type VideoCardProps = {
   title: string;
@@ -20,14 +21,18 @@ const VideoCard: FC<VideoCardProps> = ({
 }) => {
   const [play, setPlay] = useState<boolean>(false);
 
+  useEffect(() => {
+    setPlay(false)
+  }, [])
+
   const player = useVideoPlayer(video, (player) => {
-    console.log("Player initialized:", player);
-    player.loop = true;
-    player.play();
+    player.loop = false;
+    play ? player.play() : player.pause();
+    player.playbackRate = 1;
   });
 
   return (
-    <View className="flex flex-col items-center px-4 mb-14">
+    <View className="flex flex-col items-center px-4">
       <View className="flex flex-row gap-3 items-center">
         <View className="flex justify-center items-center flex-row gap-5 flex-1">
           <View
@@ -76,20 +81,44 @@ const VideoCard: FC<VideoCardProps> = ({
         </View>
       </View>
       {play ? (
-        <VideoView
+        <View
           style={{
             width: "100%",
-            height: 240,
+            height: 260,
             borderRadius: 33,
           }}
-          player={player}
-          allowsFullscreen
-          allowsPictureInPicture
-        />
+        >
+          <VideoView
+            style={{
+              width: "100%",
+              height: 240,
+              borderRadius: 33,
+            }}
+            player={player}
+            allowsFullscreen
+            allowsPictureInPicture
+          />
+          <TouchableOpacity
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "flex-end",
+              alignItems: 'flex-end',
+              width: 90,
+              backgroundColor: '#FF9C01',
+              padding: 2,
+              borderRadius: 8,
+              marginTop: 30
+            }}
+            onPress={() => setPlay(false)}
+          >
+            <Text className="text-white flex justify-end text-center">Close video</Text>
+          </TouchableOpacity>
+        </View>
       ) : (
         <TouchableOpacity
           activeOpacity={0.7}
-          onPress={() => setPlay(true)}
+          onPress={() => setPlay(!play)}
           style={{
             height: 180,
             position: "relative",
@@ -99,7 +128,6 @@ const VideoCard: FC<VideoCardProps> = ({
             justifyContent: "center",
             marginBottom: 20,
           }}
-          // className="w-full h-40 rounded-xl mt-3 relative flex justify-center items-center"
         >
           <Image
             source={{ uri: thumbnail }}
