@@ -1,10 +1,10 @@
 {
   "expo": {
-    "name": "Aora",
-    "slug": "aora",
+    "name": "Aora Upload",
+    "slug": "aora-upload",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/logo-small.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -12,16 +12,21 @@
       "supportsTablet": true,
       "package": "com.ehma.aora",
       "infoPlist": {
-    "NSPhotoLibraryUsageDescription": "Allow access to your photos to select files."
-  }
+        "NSPhotoLibraryUsageDescription": "Allow access to your photos to select files."
+      },
+      "bundleIdentifier": "com.ehma.aora"
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "foregroundImage": "./assets/images/logo-small.png",
         "backgroundColor": "#ffffff"
       },
       "package": "com.ehma.aora",
-      "permissions": ["INTERNET", "READ_EXTERNAL_STORAGE", "WRITE_EXTERNAL_STORAGE"]
+      "permissions": [
+        "INTERNET",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE"
+      ]
     },
     "web": {
       "bundler": "metro",
@@ -49,6 +54,15 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "582368e0-518a-448f-ac04-32e30dc056a4"
+      }
+    },
+    "owner": "ehma90"
   }
 }
